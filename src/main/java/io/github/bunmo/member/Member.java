@@ -1,19 +1,42 @@
 package io.github.bunmo.member;
 
-import java.math.BigDecimal;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "member")
+@EntityListeners(AuditingEntityListener.class)
 public class Member {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nickname;
-    private Gender gender;
-    private String profileImageUrl;
+
+    @Embedded
+    private MemberProfile memberProfile;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_type", nullable = false)
     private AuthType authType;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "active_type", nullable = false)
     private ActiveType activeType;
-    private String location;
-    private BigDecimal x;
-    private BigDecimal y;
+
+    @Embedded
+    private MemberLocation location;
+
+    @Column(nullable = false)
     private int gatheringOpenCount;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false, updatable = false)
+    private LocalDateTime updatedAt;
 }
