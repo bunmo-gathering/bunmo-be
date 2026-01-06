@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 
 @Embeddable
 public record MemberLocation(
-        @Column(nullable = false, precision = 3, scale = 14)
+        @Column(nullable = false, precision = 17, scale = 14)
         BigDecimal x,
-        @Column(nullable = false, precision = 2, scale = 14)
+        @Column(nullable = false, precision = 16, scale = 14)
         BigDecimal y,
         @Column(nullable = false)
         String address
