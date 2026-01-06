@@ -20,12 +20,12 @@ server:
 springdoc:
   api-docs:
     enabled: true
-    path: /v3/api-docs
-
+    path: /api-docs
   swagger-ui:
-    path: /swagger-ui.html
     enabled: true
-    groups-order: DESC
+    path: /swagger-ui
     display-request-duration: true
-    operations-sorter: DESC
-    tags-sorter: DESC
+    operations-sorter: method
+    tags-sorter: alpha
+    doc-expansion: none
+    disable-swagger-default-url: true
