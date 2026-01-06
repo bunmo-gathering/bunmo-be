@@ -16,3 +16,16 @@ spring:
       ddl-auto: update
 server:
   port: 18080
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    groups-order: DESC
+    display-request-duration: true
+    operations-sorter: DESC
+    tags-sorter: DESC
