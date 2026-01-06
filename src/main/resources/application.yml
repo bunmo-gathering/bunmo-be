@@ -28,4 +28,4 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
     doc-expansion: none
-    disable-swagger-default-url: true
+
