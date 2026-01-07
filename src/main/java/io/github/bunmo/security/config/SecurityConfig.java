@@ -3,7 +3,6 @@ package io.github.bunmo.security.config;
 import io.github.bunmo.security.JwtFilter;
 import io.github.bunmo.security.jwt.JwtAccessDeniedHandler;
 import io.github.bunmo.security.jwt.JwtAuthenticationEntryPoint;
-import io.github.bunmo.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final JwtUtil jwtUtil;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
@@ -69,7 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/member/login", "/api/v1/member/signup", "/api-docs/**", "/swagger-ui/**", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 
     }
