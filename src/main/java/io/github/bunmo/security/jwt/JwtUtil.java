@@ -57,16 +57,13 @@ public class JwtUtil {
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.error("잘 못된 JWT 서명입니다");
-//            throw new AuthException(AuthErrorCode.INVALID_JWT_TOKEN);
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT 토큰입니다.");
             throw new AuthException(AuthErrorCode.EXPIRED_JWT_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.error("지원되지 않는 JWT 토큰입니다.");
-//            throw new AuthException(AuthErrorCode.UNSUPPORTED_JWT_TOKEN);
         } catch (IllegalArgumentException e) {
             log.error("JWT 토큰이 잘못되었습니다.");
-//            throw new AuthException(AuthErrorCode.ACCESS_DENIED);
         }
         return false;
     }
