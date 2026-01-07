@@ -1,6 +1,6 @@
 package io.github.bunmo.security;
 
-import io.github.bunmo.member.infrastructure.entity.RoleType;
+import io.github.bunmo.member.infrastructure.domain.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

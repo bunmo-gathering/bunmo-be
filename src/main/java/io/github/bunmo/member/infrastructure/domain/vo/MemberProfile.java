@@ -1,5 +1,6 @@
-package io.github.bunmo.member;
+package io.github.bunmo.member.infrastructure.domain.vo;
 
+import io.github.bunmo.member.infrastructure.domain.enums.Gender;
 import jakarta.persistence.Embeddable;
 
 @Embeddable

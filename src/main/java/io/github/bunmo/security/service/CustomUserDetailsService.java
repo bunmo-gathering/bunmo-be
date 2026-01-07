@@ -1,10 +1,10 @@
 package io.github.bunmo.security.service;
 
+import io.github.bunmo.member.infrastructure.domain.Member;
+import io.github.bunmo.member.infrastructure.repository.MemberRepository;
 import io.github.bunmo.security.CustomUserDetails;
 import io.github.bunmo.security.exception.AuthErrorCode;
 import io.github.bunmo.security.exception.AuthException;
-import io.github.bunmo.member.infrastructure.entity.Member;
-import io.github.bunmo.member.infrastructure.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

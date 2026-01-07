@@ -1,4 +1,4 @@
-package io.github.bunmo.member;
+package io.github.bunmo.member.infrastructure.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
