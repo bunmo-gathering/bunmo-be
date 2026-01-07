@@ -29,3 +29,9 @@ springdoc:
     tags-sorter: alpha
     doc-expansion: none
 
+jwt:
+  secret: +911VYr4eRTnV4Ubb2i/GhmQjs9CCPnfVhxdXe/sX0l6rO4budtCOK4xCFUbspeiplwjZCotXsYsKGKi0DlIKw==
+  access-token:
+    expire-time: 86400000
+  refresh-token:
+    expire-time: 259200000
