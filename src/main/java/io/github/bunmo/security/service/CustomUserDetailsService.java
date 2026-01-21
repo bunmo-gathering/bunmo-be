@@ -23,6 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.ACCESS_DENIED));
 
-        return new CustomUserDetails(member.email(), member.role());
+        return CustomUserDetails.from(member);
     }
 }
