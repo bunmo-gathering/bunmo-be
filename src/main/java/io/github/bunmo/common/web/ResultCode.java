@@ -1,11 +1,8 @@
-package io.github.bunmo.common.exception;
+package io.github.bunmo.common.web;
 
 import org.springframework.http.HttpStatus;
 
-/**
-* 각 도메인에서 구현
-*/
-public interface ErrorCode {
+public interface ResultCode {
     HttpStatus statusCode();
     String code();
     String message();

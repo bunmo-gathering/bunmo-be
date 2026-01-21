@@ -1,5 +1,10 @@
-package io.github.bunmo.member;
+package io.github.bunmo.member.infrastructure.domain;
 
+import io.github.bunmo.member.infrastructure.domain.enums.ActiveType;
+import io.github.bunmo.member.infrastructure.domain.enums.AuthType;
+import io.github.bunmo.member.infrastructure.domain.enums.RoleType;
+import io.github.bunmo.member.infrastructure.domain.vo.MemberLocation;
+import io.github.bunmo.member.infrastructure.domain.vo.MemberProfile;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,6 +20,8 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String email;
+
     @Embedded
     private MemberProfile memberProfile;
 
@@ -25,6 +32,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "active_type", nullable = false)
     private ActiveType activeType;
+
+    @Enumerated(EnumType.STRING)
+    private RoleType role;
 
     @Embedded
     private MemberLocation location;
@@ -37,6 +47,14 @@ public class Member {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false, updatable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public String email() {
+        return this.email;
+    }
+
+    public RoleType role() {
+        return this.role;
+    }
 }
