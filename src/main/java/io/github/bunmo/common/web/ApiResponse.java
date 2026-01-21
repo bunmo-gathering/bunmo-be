@@ -21,8 +21,8 @@ public class ApiResponse<T> {
 
     public record FieldError(String field, String message) {}
 
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>("OK", "success", data, null);
+    public static <T> ApiResponse<T> success(ResultCode resultCode, T data) {
+        return new ApiResponse<>(resultCode.code(), resultCode.message(), data, null);
     }
 
     public static ApiResponse<Void> error(ErrorCode errorCode) {
