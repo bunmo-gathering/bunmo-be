@@ -1,4 +1,4 @@
-package io.github.bunmo.common.report;
+package io.github.bunmo.report;
 
 import jakarta.persistence.*;
 
