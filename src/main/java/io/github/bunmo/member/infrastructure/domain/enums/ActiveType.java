@@ -1,5 +1,5 @@
 package io.github.bunmo.member.infrastructure.domain.enums;
 
 public enum ActiveType {
-    ACTIVE, INACTIVE, BANNED, WITHDRAWAL
+    PENDING, ACTIVE, INACTIVE, BANNED, WITHDRAWAL
 }
