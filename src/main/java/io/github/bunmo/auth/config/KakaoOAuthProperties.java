@@ -8,6 +8,8 @@ public record KakaoOAuthProperties(
         String clientSecret,
         String redirectUri,
         String tokenUri,
-        String userInfoUri
+        String tokenPath,
+        String userInfoUri,
+        String userInfoPath
 ) {
 }
