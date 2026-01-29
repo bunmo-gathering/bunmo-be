@@ -1,6 +1,5 @@
 package io.github.bunmo.auth.exception;
 
-import io.github.bunmo.auth.service.KakaoOAuthService;
 import io.github.bunmo.common.exception.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
