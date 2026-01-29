@@ -19,8 +19,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+        Member member = memberRepository.findById(Long.parseLong(id))
                 .orElseThrow(() -> new AuthException(AuthErrorCode.ACCESS_DENIED));
 
         return CustomUserDetails.from(member);

@@ -1,19 +1,9 @@
 spring:
   application:
     name: bunmo
-  datasource:
-    url: jdbc:mysql://localhost:23306/lxp?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: bunmo_user
-    password: bunmo_password
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
-  jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-    hibernate:
-      ddl-auto: update
 server:
   port: 18080
 
@@ -28,10 +18,3 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
     doc-expansion: none
-
-jwt:
-  secret: +911VYr4eRTnV4Ubb2i/GhmQjs9CCPnfVhxdXe/sX0l6rO4budtCOK4xCFUbspeiplwjZCotXsYsKGKi0DlIKw==
-  access-token:
-    expire-time: 86400000
-  refresh-token:
-    expire-time: 259200000
