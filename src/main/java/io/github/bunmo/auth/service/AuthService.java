@@ -53,7 +53,7 @@ public class AuthService {
     private Member findOrCreateMember(Provider provider, Long providerId) {
         return socialAccountRepository.findByProviderAndProviderId(provider, providerId.toString())
                 .map(this::findAndValidateMember)
-                .orElseGet(() -> createNewMemberWithSocialAccount(providerId));
+                .orElseGet(() -> createNewMemberWithSocialAccount(provider, providerId));
     }
 
     private Member findAndValidateMember(SocialAccount socialAccount) {
@@ -67,11 +67,11 @@ public class AuthService {
         return member;
     }
 
-    private Member createNewMemberWithSocialAccount(Long providerId) {
+    private Member createNewMemberWithSocialAccount(Provider provider, Long providerId) {
         Member member = Member.createPendingMember();
         memberRepository.save(member);
 
-        SocialAccount socialAccount = SocialAccount.create(member.getId(), Provider.KAKAO, providerId.toString());
+        SocialAccount socialAccount = SocialAccount.create(member.getId(), provider, providerId.toString());
         socialAccountRepository.save(socialAccount);
         return member;
     }
