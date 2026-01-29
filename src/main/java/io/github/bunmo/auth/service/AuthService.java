@@ -3,7 +3,7 @@ package io.github.bunmo.auth.service;
 import io.github.bunmo.auth.dto.request.KakaoLoginRequest;
 import io.github.bunmo.auth.dto.response.KakaoTokenResponse;
 import io.github.bunmo.auth.dto.response.KakaoUserInfoResponse;
-import io.github.bunmo.auth.dto.response.TokenResponse;
+import io.github.bunmo.auth.dto.response.LoginResponse;
 import io.github.bunmo.auth.exception.OAuthErrorCode;
 import io.github.bunmo.auth.infrastructure.domain.SocialAccount;
 import io.github.bunmo.auth.infrastructure.domain.enums.Provider;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -34,7 +33,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public TokenResponse kakaoLogin(KakaoLoginRequest request) {
+    public LoginResponse kakaoLogin(KakaoLoginRequest request) {
         KakaoTokenResponse kakaoToken = kakaoOAuthService.getAccessTokenFromKakao(request.code());
         KakaoUserInfoResponse userInfo = kakaoOAuthService.getUserInfo(kakaoToken.accessToken());
         Long providerId = extractProviderId(userInfo);
@@ -42,7 +41,7 @@ public class AuthService {
         Member member = findOrCreateMember(Provider.KAKAO, providerId);
 
         Authentication auth = createAuthentication(member);
-        return new TokenResponse(
+        return new LoginResponse(
                 jwtUtil.createAccessToken(auth),
                 jwtUtil.createRefreshToken(auth),
                 jwtUtil.getAccessTokenValidity(),
