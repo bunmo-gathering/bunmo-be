@@ -39,7 +39,7 @@ public class AuthService {
         KakaoUserInfoResponse userInfo = kakaoOAuthService.getUserInfo(kakaoToken.accessToken());
         Long providerId = extractProviderId(userInfo);
 
-        Member member = findOrCreateMember(providerId);
+        Member member = findOrCreateMember(Provider.KAKAO, providerId);
 
         Authentication auth = createAuthentication(member);
         return new TokenResponse(
@@ -50,8 +50,8 @@ public class AuthService {
         );
     }
 
-    private Member findOrCreateMember(Long providerId) {
-        return socialAccountRepository.findByProviderAndProviderId(Provider.KAKAO, providerId.toString())
+    private Member findOrCreateMember(Provider provider, Long providerId) {
+        return socialAccountRepository.findByProviderAndProviderId(provider, providerId.toString())
                 .map(this::findAndValidateMember)
                 .orElseGet(() -> createNewMemberWithSocialAccount(providerId));
     }

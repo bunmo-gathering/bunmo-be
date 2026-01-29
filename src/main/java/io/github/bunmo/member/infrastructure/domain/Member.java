@@ -67,16 +67,7 @@ public class Member {
     }
 
     public boolean validateMemberStatus() {
-        if (activeType == ActiveType.BANNED) {
-            return false;
-        }
-        if (activeType == ActiveType.WITHDRAWAL) {
-            return false;
-        }
-        if (activeType == ActiveType.INACTIVE) {
-            return false;
-        }
-        return true;
+        return activeType.isValid();
     }
 
     public boolean isNewMember() {

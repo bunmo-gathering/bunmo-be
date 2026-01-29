@@ -16,7 +16,7 @@ public class SocialAccount {
     private Long id;
 
     @Column(name = "member_id", nullable = false)
-    Long memberId;
+    private Long memberId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
