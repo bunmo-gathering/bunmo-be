@@ -19,3 +19,13 @@ jwt:
     expire-time: 86400000
   refresh-token:
     expire-time: 259200000
+
+oauth2:
+  kakao:
+    client-id: kakao-client-id
+    client-secret: kakao-secret
+    redirect-uri: http://localhost:18080/api/v1/oauth2/kakao
+    token-uri: https://kauth.kakao.com
+    token-path: /oauth/token
+    user-info-uri: https://kapi.kakao.com
+    user-info-path: /v2/user/me
