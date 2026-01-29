@@ -22,7 +22,7 @@ jwt:
 
 oauth2:
   kakao:
-    client-id: kakao-client-id
+    client-id: kakao-client-id-test
     client-secret: kakao-secret
     redirect-uri: http://localhost:18080/api/v1/oauth2/kakao
     token-uri: https://kauth.kakao.com
