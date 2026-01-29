@@ -39,23 +39,7 @@ public class AuthService {
         KakaoUserInfoResponse userInfo = kakaoOAuthService.getUserInfo(kakaoToken.accessToken());
         Long providerId = extractProviderId(userInfo);
 
-        Optional<SocialAccount> existing = socialAccountRepository.findByProviderAndProviderId(Provider.KAKAO, providerId.toString());
-        boolean isNewMember = existing.isEmpty();
-        Member member;
-        if (isNewMember) {
-            member = Member.createPendingMember();
-            memberRepository.save(member);
-
-            SocialAccount socialAccount = SocialAccount.create(member.getId(), Provider.KAKAO, providerId.toString());
-            socialAccountRepository.save(socialAccount);
-        } else {
-            SocialAccount socialAccount = existing.get();
-            member = memberRepository.findById(socialAccount.getMemberId())
-                    .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
-            if(!member.validateMemberStatus()) {
-                throw new BusinessException(OAuthErrorCode.INVALID_MEMBER);
-            }
-        }
+        Member member = findOrCreateMember(providerId);
 
         Authentication auth = createAuthentication(member);
         return new TokenResponse(
@@ -64,6 +48,32 @@ public class AuthService {
                 jwtUtil.getAccessTokenValidity(),
                 member.isNewMember()
         );
+    }
+
+    private Member findOrCreateMember(Long providerId) {
+        return socialAccountRepository.findByProviderAndProviderId(Provider.KAKAO, providerId.toString())
+                .map(this::findAndValidateMember)
+                .orElseGet(() -> createNewMemberWithSocialAccount(providerId));
+    }
+
+    private Member findAndValidateMember(SocialAccount socialAccount) {
+        Member member = memberRepository.findById(socialAccount.getMemberId())
+                .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        if (!member.validateMemberStatus()) {
+            throw new BusinessException(OAuthErrorCode.INVALID_MEMBER);
+        }
+
+        return member;
+    }
+
+    private Member createNewMemberWithSocialAccount(Long providerId) {
+        Member member = Member.createPendingMember();
+        memberRepository.save(member);
+
+        SocialAccount socialAccount = SocialAccount.create(member.getId(), Provider.KAKAO, providerId.toString());
+        socialAccountRepository.save(socialAccount);
+        return member;
     }
 
     private Long extractProviderId(KakaoUserInfoResponse userInfo) {

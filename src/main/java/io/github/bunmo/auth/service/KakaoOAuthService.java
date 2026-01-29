@@ -21,7 +21,7 @@ public class KakaoOAuthService {
 
     public KakaoTokenResponse getAccessTokenFromKakao(String code) {
 
-        KakaoTokenResponse kakaoTokenResponseDto = WebClient.create(properties.tokenUri()).post()
+        return WebClient.create(properties.tokenUri()).post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
                         .path(properties.tokenPath())
@@ -36,12 +36,11 @@ public class KakaoOAuthService {
                 .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new BusinessException(OAuthErrorCode.KAKAO_SERVER_ERROR)))
                 .bodyToMono(KakaoTokenResponse.class)
                 .block();
-        return kakaoTokenResponseDto;
     }
 
     public KakaoUserInfoResponse getUserInfo(String accessToken) {
 
-        KakaoUserInfoResponse userInfo = WebClient.create(properties.userInfoUri())
+        return WebClient.create(properties.userInfoUri())
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
@@ -54,7 +53,5 @@ public class KakaoOAuthService {
                 .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new BusinessException(OAuthErrorCode.KAKAO_SERVER_ERROR)))
                 .bodyToMono(KakaoUserInfoResponse.class)
                 .block();
-
-        return userInfo;
     }
 }
