@@ -12,6 +12,7 @@ import io.github.bunmo.common.exception.BusinessException;
 import io.github.bunmo.member.exception.MemberErrorCode;
 import io.github.bunmo.member.infrastructure.domain.Member;
 import io.github.bunmo.member.infrastructure.repository.MemberRepository;
+import io.github.bunmo.security.CustomUserDetails;
 import io.github.bunmo.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,9 +85,9 @@ public class AuthService {
 
     private Authentication createAuthentication(Member member) {
         return new UsernamePasswordAuthenticationToken(
-                member.getId(),
-                null,
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + member.role().name()))
+            CustomUserDetails.from(member),
+            null,
+            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + member.role().name()))
         );
     }
 }
