@@ -5,6 +5,7 @@ import io.github.bunmo.member.infrastructure.domain.enums.RoleType;
 import io.github.bunmo.member.infrastructure.domain.vo.MemberLocation;
 import io.github.bunmo.member.infrastructure.domain.vo.MemberProfile;
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,9 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true, updatable = false)
+    private String uuid;
 
     @Embedded
     private MemberProfile memberProfile;
@@ -50,6 +54,7 @@ public class Member {
 
     public static Member createPendingMember() {
         Member member = new Member();
+        member.uuid = UUID.randomUUID().toString();
         member.activeType = ActiveType.PENDING;
         member.role = RoleType.MEMBER;
         member.location = null;
