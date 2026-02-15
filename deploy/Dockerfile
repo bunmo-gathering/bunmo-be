@@ -3,9 +3,9 @@ FROM --platform=$BUILDPLATFORM eclipse-temurin:17-jdk AS builder
 WORKDIR /app
 
 # 1-1. Gradle 빌드 환경 복사 (캐시 활용을 위해 소스보다 먼저 복사)
-COPY ../gradlew .
-COPY ../gradle gradle
-COPY ../build.gradle settings.gradle ./
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
 
 # 1-2. gradlew 실행 권한 부여
 RUN chmod +x ./gradlew
@@ -14,7 +14,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew dependencies --no-daemon
 
 # 1-4. 소스 코드 복사 및 빌드
-COPY ../src src
+COPY src src
 RUN ./gradlew build -x test --no-daemon
 
 # 1-5. Layered JAR 추출 (레이어별 캐싱 최적화)
@@ -38,7 +38,7 @@ COPY --from=builder /app/application/ ./
 
 # 2-4. 비-root 사용자로 전환
 USER appuser
-EXPOSE 8080
+EXPOSE 18080
 
 # 2-5. 실행 (컨테이너 환경 최적화 JVM 옵션 포함)
 ENTRYPOINT ["java", \
