@@ -1,0 +1,57 @@
+name: Deploy to Mac Mini Runner
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, macOS]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        working-directory: deploy
+        run: |
+          cat << 'EOF' > .env
+          DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          DATABASE_ROOT_PASSWORD=${{ secrets.DATABASE_ROOT_PASSWORD }}
+          DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+          DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}
+          EOF
+
+      - name: Stop existing containers
+        working-directory: deploy
+        run: docker compose down --remove-orphans || true
+
+      - name: Build and deploy
+        working-directory: deploy
+        run: docker compose up -d --build
+
+      - name: Cleanup .env file
+        working-directory: deploy
+        if: always()
+        run: rm -f .env
+
+      - name: Health check
+        run: |
+          echo "Waiting for application to start..."
+          sleep 30
+          curl -f http://localhost:6003/api/health || echo "Health check failed, checking container logs..."
+          docker logs bunmo-api --tail 50 || true
+
+      - name: Show container status
+        if: always()
+        run: docker ps -a | grep bunmo || true
