@@ -85,6 +85,10 @@ public class JwtUtil {
         return parseClaims(token).getSubject();
     }
 
+    public String getUuid(String token) {
+        return parseClaims(token).getSubject();
+    }
+
     private String generateToken(Authentication authentication, long expireTime) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

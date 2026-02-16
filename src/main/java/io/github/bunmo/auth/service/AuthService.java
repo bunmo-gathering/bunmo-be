@@ -1,6 +1,7 @@
 package io.github.bunmo.auth.service;
 
 import io.github.bunmo.auth.dto.request.KakaoLoginRequest;
+import io.github.bunmo.auth.dto.request.TokenReissueRequest;
 import io.github.bunmo.auth.dto.response.KakaoTokenResponse;
 import io.github.bunmo.auth.dto.response.KakaoUserInfoResponse;
 import io.github.bunmo.auth.dto.response.LoginResponse;
@@ -14,6 +15,8 @@ import io.github.bunmo.member.exception.MemberErrorCode;
 import io.github.bunmo.member.infrastructure.domain.Member;
 import io.github.bunmo.member.infrastructure.repository.MemberRepository;
 import io.github.bunmo.security.CustomUserDetails;
+import io.github.bunmo.security.exception.AuthErrorCode;
+import io.github.bunmo.security.exception.AuthException;
 import io.github.bunmo.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +54,14 @@ public class AuthService {
         );
     }
 
-    public TokenResponse reissueToken(CustomUserDetails user) {
-        Member member = memberRepository.findByUuid(user.getUuid())
+    public TokenResponse reissueToken(TokenReissueRequest request) {
+        String refreshToken = request.refreshToken();
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new AuthException(AuthErrorCode.INVALID_JWT_TOKEN);
+        }
+
+        String uuid = jwtUtil.getUuid(refreshToken);
+        Member member = memberRepository.findByUuid(uuid)
             .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Authentication auth = createAuthentication(member);

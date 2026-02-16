@@ -3,12 +3,11 @@ package io.github.bunmo.auth.controller;
 import io.github.bunmo.auth.controller.doc.AuthControllerDoc;
 import io.github.bunmo.auth.dto.AuthResultCode;
 import io.github.bunmo.auth.dto.request.KakaoLoginRequest;
+import io.github.bunmo.auth.dto.request.TokenReissueRequest;
 import io.github.bunmo.auth.dto.response.LoginResponse;
 import io.github.bunmo.auth.dto.response.TokenResponse;
 import io.github.bunmo.auth.service.AuthService;
 import io.github.bunmo.common.web.ApiResponse;
-import io.github.bunmo.security.CustomUserDetails;
-import io.github.bunmo.security.annotation.LoginUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +37,9 @@ public class AuthController implements AuthControllerDoc {
 
     @PostMapping("/auth/refresh")
     public ResponseEntity<ApiResponse<TokenResponse>> reissueToken(
-        @LoginUser CustomUserDetails user
+        @RequestBody TokenReissueRequest request
     ) {
-        TokenResponse response = authService.reissueToken(user);
+        TokenResponse response = authService.reissueToken(request);
         return ResponseEntity.status(AuthResultCode.JWT_TOKEN_REISSUE_SUCCESS.statusCode())
             .body(ApiResponse.success(AuthResultCode.JWT_TOKEN_REISSUE_SUCCESS, response));
     }
