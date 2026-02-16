@@ -27,6 +27,7 @@ public class JwtUtil {
     private final long accessTokenExpireTime;
     private final long refreshTokenExpireTime;
     private static final String AUTHORITIES_KEY = "roles";
+    private static final String TOKEN_TYPE = "type";
 
     public JwtUtil(
             @Value("${jwt.secret}") String secretKey,
@@ -40,11 +41,11 @@ public class JwtUtil {
     }
 
     public String createAccessToken(Authentication authentication) {
-        return generateToken(authentication, accessTokenExpireTime);
+        return generateToken(authentication, accessTokenExpireTime, TokenType.ACCESS_TOKEN.toString());
     }
 
     public String createRefreshToken(Authentication authentication) {
-        return generateToken(authentication, refreshTokenExpireTime);
+        return generateToken(authentication, refreshTokenExpireTime, TokenType.REFRESH_TOKEN.toString());
     }
 
     public Long getAccessTokenValidity() {
@@ -89,7 +90,13 @@ public class JwtUtil {
         return parseClaims(token).getSubject();
     }
 
-    private String generateToken(Authentication authentication, long expireTime) {
+    public TokenType getTokenType(String token) {
+        Claims claims = parseClaims(token);
+        String tokenType = claims.get(TOKEN_TYPE, String.class);
+        return TokenType.valueOf(tokenType);
+    }
+
+    private String generateToken(Authentication authentication, long expireTime, String tokenType) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -100,6 +107,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim(TOKEN_TYPE, tokenType)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)

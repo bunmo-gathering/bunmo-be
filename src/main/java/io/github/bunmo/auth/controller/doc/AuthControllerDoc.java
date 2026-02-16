@@ -220,6 +220,22 @@ public interface AuthControllerDoc {
                     )
                 )
             ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "400",
+                description = "잘못된 토큰 타입",
+                content = @Content(
+                    schema = @Schema(implementation = ApiResponse.class),
+                    examples = @ExampleObject(
+                        name = "INVALID_TOKEN_TYPE",
+                        value = """
+                            {
+                                "code": "UNAUTHORIZED_006",
+                                "message": "잘못된 토큰 타입입니다."
+                            }
+                        """
+                    )
+                )
+            ),
         }
     )
     ResponseEntity<ApiResponse<TokenResponse>> reissueToken(

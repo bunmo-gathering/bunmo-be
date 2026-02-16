@@ -16,8 +16,8 @@ import io.github.bunmo.member.infrastructure.domain.Member;
 import io.github.bunmo.member.infrastructure.repository.MemberRepository;
 import io.github.bunmo.security.CustomUserDetails;
 import io.github.bunmo.security.exception.AuthErrorCode;
-import io.github.bunmo.security.exception.AuthException;
 import io.github.bunmo.security.jwt.JwtUtil;
+import io.github.bunmo.security.jwt.TokenType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,8 +56,13 @@ public class AuthService {
 
     public TokenResponse reissueToken(TokenReissueRequest request) {
         String refreshToken = request.refreshToken();
+
+        if (jwtUtil.getTokenType(refreshToken) != TokenType.REFRESH_TOKEN) {
+            throw new BusinessException(AuthErrorCode.INVALID_TOKEN_TYPE);
+        }
+
         if (!jwtUtil.validateToken(refreshToken)) {
-            throw new AuthException(AuthErrorCode.INVALID_JWT_TOKEN);
+            throw new BusinessException(AuthErrorCode.INVALID_JWT_TOKEN);
         }
 
         String uuid = jwtUtil.getUuid(refreshToken);
