@@ -12,7 +12,8 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public enum AuthResultCode implements ResultCode {
     LOGIN_SUCCESS(OK, "AUTH_001", "로그인 성공"),
-    SIGNUP_SUCCESS(CREATED, "AUTH_002", "회원가입 성공");
+    SIGNUP_SUCCESS(CREATED, "AUTH_002", "회원가입 성공"),
+    JWT_TOKEN_REISSUE_SUCCESS(OK, "AUTH_003", "토큰 재발급 성공");
 
     private final HttpStatus statusCode;
     private final String code;

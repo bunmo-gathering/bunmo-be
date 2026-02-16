@@ -3,10 +3,12 @@ package io.github.bunmo.member.exception;
 import io.github.bunmo.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;
 
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public enum MemberErrorCode implements ErrorCode {
-    MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER_001", "존재하지 않는 회원입니다");
+    MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER_001", "존재하지 않는 회원입니다"),
+    MEMBER_INVALID_STATUS(FORBIDDEN, "MEMBER_002", "유효하지 않은 회원 상태입니다");
 
     private final HttpStatus statusCode;
     private final String code;

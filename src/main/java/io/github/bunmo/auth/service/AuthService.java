@@ -1,9 +1,11 @@
 package io.github.bunmo.auth.service;
 
 import io.github.bunmo.auth.dto.request.KakaoLoginRequest;
+import io.github.bunmo.auth.dto.request.TokenReissueRequest;
 import io.github.bunmo.auth.dto.response.KakaoTokenResponse;
 import io.github.bunmo.auth.dto.response.KakaoUserInfoResponse;
 import io.github.bunmo.auth.dto.response.LoginResponse;
+import io.github.bunmo.auth.dto.response.TokenResponse;
 import io.github.bunmo.auth.exception.OAuthErrorCode;
 import io.github.bunmo.auth.infrastructure.domain.SocialAccount;
 import io.github.bunmo.auth.infrastructure.domain.enums.Provider;
@@ -13,7 +15,9 @@ import io.github.bunmo.member.exception.MemberErrorCode;
 import io.github.bunmo.member.infrastructure.domain.Member;
 import io.github.bunmo.member.infrastructure.repository.MemberRepository;
 import io.github.bunmo.security.CustomUserDetails;
+import io.github.bunmo.security.exception.AuthErrorCode;
 import io.github.bunmo.security.jwt.JwtUtil;
+import io.github.bunmo.security.jwt.TokenType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,6 +52,29 @@ public class AuthService {
                 jwtUtil.getAccessTokenValidity(),
                 member.isNewMember()
         );
+    }
+
+    public TokenResponse reissueToken(TokenReissueRequest request) {
+        String refreshToken = request.refreshToken();
+
+        if (jwtUtil.getTokenType(refreshToken) != TokenType.REFRESH_TOKEN) {
+            throw new BusinessException(AuthErrorCode.INVALID_TOKEN_TYPE);
+        }
+
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new BusinessException(AuthErrorCode.INVALID_JWT_TOKEN);
+        }
+
+        String uuid = jwtUtil.getUuid(refreshToken);
+        Member member = memberRepository.findByUuid(uuid)
+            .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        if (!member.validateMemberStatus()) {
+            throw new BusinessException(MemberErrorCode.MEMBER_INVALID_STATUS);
+        }
+
+        Authentication auth = createAuthentication(member);
+        return new TokenResponse(jwtUtil.createAccessToken(auth), jwtUtil.createRefreshToken(auth));
     }
 
     private Member findOrCreateMember(Provider provider, Long providerId) {

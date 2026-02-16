@@ -9,6 +9,7 @@ public enum AuthErrorCode implements ErrorCode {
     UNSUPPORTED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_003", "지원하지 않는 토큰입니다"),
     ACCESS_DENIED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_004", "접근이 거부되었습니다"),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_005", "인증이 필요합니다"),
+    INVALID_TOKEN_TYPE(HttpStatus.BAD_REQUEST, "UNAUTHORIZED_006", "잘못된 토큰 타입입니다.")
     ;
 
     private final HttpStatus statusCode;
