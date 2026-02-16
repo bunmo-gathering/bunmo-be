@@ -36,14 +36,10 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
 
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof CustomUserDetails) {
-            return principal;
-        }
-
-        if (!(principal instanceof String)) {
+        if (!(principal instanceof CustomUserDetails)) {
             throw new AuthException(AuthErrorCode.UNAUTHORIZED);
         }
-
         return principal;
+
     }
 }
