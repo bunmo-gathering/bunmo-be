@@ -38,7 +38,7 @@ public class AuthController implements AuthControllerDoc {
     @Override
     @PostMapping("/auth/refresh")
     public ResponseEntity<ApiResponse<TokenResponse>> reissueToken(
-        @RequestBody TokenReissueRequest request
+        @Valid @RequestBody TokenReissueRequest request
     ) {
         TokenResponse response = authService.reissueToken(request);
         return ResponseEntity.status(AuthResultCode.JWT_TOKEN_REISSUE_SUCCESS.statusCode())
