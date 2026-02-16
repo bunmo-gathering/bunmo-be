@@ -4,6 +4,7 @@ import io.github.bunmo.auth.dto.request.KakaoLoginRequest;
 import io.github.bunmo.auth.dto.response.KakaoTokenResponse;
 import io.github.bunmo.auth.dto.response.KakaoUserInfoResponse;
 import io.github.bunmo.auth.dto.response.LoginResponse;
+import io.github.bunmo.auth.dto.response.TokenResponse;
 import io.github.bunmo.auth.exception.OAuthErrorCode;
 import io.github.bunmo.auth.infrastructure.domain.SocialAccount;
 import io.github.bunmo.auth.infrastructure.domain.enums.Provider;
@@ -48,6 +49,14 @@ public class AuthService {
                 jwtUtil.getAccessTokenValidity(),
                 member.isNewMember()
         );
+    }
+
+    public TokenResponse reissueToken(CustomUserDetails user) {
+        Member member = memberRepository.findByUuid(user.getUuid())
+            .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        Authentication auth = createAuthentication(member);
+        return new TokenResponse(jwtUtil.createAccessToken(auth), jwtUtil.createRefreshToken(auth));
     }
 
     private Member findOrCreateMember(Provider provider, Long providerId) {
