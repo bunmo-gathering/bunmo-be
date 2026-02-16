@@ -35,6 +35,7 @@ public class AuthController implements AuthControllerDoc {
                 .body(ApiResponse.success(resultCode, response));
     }
 
+    @Override
     @PostMapping("/auth/refresh")
     public ResponseEntity<ApiResponse<TokenResponse>> reissueToken(
         @RequestBody TokenReissueRequest request

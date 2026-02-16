@@ -64,6 +64,10 @@ public class AuthService {
         Member member = memberRepository.findByUuid(uuid)
             .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
+        if (!member.validateMemberStatus()) {
+            throw new BusinessException(MemberErrorCode.MEMBER_INVALID_STATUS);
+        }
+
         Authentication auth = createAuthentication(member);
         return new TokenResponse(jwtUtil.createAccessToken(auth), jwtUtil.createRefreshToken(auth));
     }

@@ -1,7 +1,9 @@
 package io.github.bunmo.auth.controller.doc;
 
 import io.github.bunmo.auth.dto.request.KakaoLoginRequest;
+import io.github.bunmo.auth.dto.request.TokenReissueRequest;
 import io.github.bunmo.auth.dto.response.LoginResponse;
+import io.github.bunmo.auth.dto.response.TokenResponse;
 import io.github.bunmo.common.web.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -144,5 +146,83 @@ public interface AuthControllerDoc {
     )
     ResponseEntity<ApiResponse<LoginResponse>> kakaoLogin(
             KakaoLoginRequest request
+    );
+
+    @Operation(
+        summary = "jwt token 재발급",
+        description = "refresh token으로 jwt token을 재발급 합니다",
+        responses = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "200",
+                description = "토큰 재발급 성공",
+                content = @Content(
+                    schema = @Schema(implementation = TokenResponse.class),
+                    examples = @ExampleObject(
+                        name = "LOGIN_SUCCESS",
+                        value = """
+                            {
+                              "code": "AUTH_003",
+                              "message": "토큰 재발급 성공",
+                              "data": {
+                                "accessToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3YWIyZTk2NC0wNDZkLTQxNWMtOWQxNi0yMGNlNWI3ODE0NGUiLCJyb2xlcyI6IlJPTEVfTUVNQkVSIiwiaWF0IjoxNzcxMjMyMDk1LCJleHAiOjE3NzEzMTg0OTV9.fPbNmAZX1kBqGYSj9FxAFGjp8BN5gul0D9sjQMHxV3lp1q_JGeqLnA8u1oWCJi6NqeUT4AMziQtdRWwOiwMEbg",
+                                "refreshToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3YWIyZTk2NC0wNDZkLTQxNWMtOWQxNi0yMGNlNWI3ODE0NGUiLCJyb2xlcyI6IlJPTEVfTUVNQkVSIiwiaWF0IjoxNzcxMjMyMDk1LCJleHAiOjE3NzE0OTEyOTV9.AsHVQsQFs84DUYAOH4GZs61CuBa0qq7_1sConU7sMYC5DF6RWuLlXSkv0_NNWQC9qaZTf3gNCA_Q-JvU7tNbaQ"
+                              }
+                            }
+                                                    """
+                    )
+                )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "401",
+                description = "유효하지 않은 jwt token",
+                content = @Content(
+                    schema = @Schema(implementation = ApiResponse.class),
+                    examples = @ExampleObject(
+                        name = "INVALID_JWT_TOKEN",
+                        value = """
+                                                    {
+                                                      "code": "UNAUTHORIZED_001",
+                                                      "message": "유효하지 않은 토큰입니다"
+                                                    }
+                                                    """
+                    )
+                )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "404",
+                description = "존재하지 않는 회원",
+                content = @Content(
+                    schema = @Schema(implementation = ApiResponse.class),
+                    examples = @ExampleObject(
+                        name = "MEMBER_NOT_FOUND",
+                        value = """
+                                                    {
+                                                      "code": "MEMBER_001",
+                                                      "message": "존재하지 않는 회원입니다"
+                                                    }
+                                                    """
+                    )
+                )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                responseCode = "403",
+                description = "유효하지 않은 회원",
+                content = @Content(
+                    schema = @Schema(implementation = ApiResponse.class),
+                    examples = @ExampleObject(
+                        name = "MEMBER_INVALID_STATUS",
+                        value = """
+                                                    {
+                                                      "code": "MEMBER_002",
+                                                      "message": "유효하지 않은 회원 상태입니다"
+                                                    }
+                                                    """
+                    )
+                )
+            ),
+        }
+    )
+    ResponseEntity<ApiResponse<TokenResponse>> reissueToken(
+        TokenReissueRequest request
     );
 }
