@@ -19,13 +19,7 @@ CREATE TABLE `member` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
--- bunmo.product_category definition
-
-CREATE TABLE `product_category` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+-- bunmo.product_category definition (레거시 - gathering 테이블 재설계로 미사용)
 
 
 -- bunmo.reported_user_history definition
@@ -54,19 +48,23 @@ CREATE TABLE `social_account` (
 
 CREATE TABLE `gathering` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `introduction` varchar(255) NOT NULL,
-  `open_chat_link` varchar(255) NOT NULL,
-  `gathering_time` datetime(6) NOT NULL,
+  `type` enum('ONLINE','MART','FREE') NOT NULL,
+  `active_type` enum('ACTIVE','DELETED','REPORTED','CLOSED') NOT NULL,
+  `category` enum('FOOD','DAILY_SUPPLIES','ELECTRONICS','BEAUTY','BABY','KITCHEN','HOBBY','PET','FASHION','FURNITURE','SPORTS','AUTO','BOOK','OFFICE') NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `introduction` varchar(500) NOT NULL,
+  `open_chat_link` varchar(200) NOT NULL,
+  `price` decimal(10,0) DEFAULT NULL,
+  `product_link` varchar(200) DEFAULT NULL,
+  `meeting_date` date NOT NULL,
+  `meeting_time` time NOT NULL,
   `x` decimal(17,14) NOT NULL,
   `y` decimal(16,14) NOT NULL,
-  `address` varchar(255) NOT NULL,
+  `address` varchar(20) NOT NULL,
   `max_participant_count` int NOT NULL,
-  `owner_id` bigint DEFAULT NULL,
-  `product_category` bigint NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FKc4vg8y04aqb8e74jss5wvnpqo` (`product_category`),
-  CONSTRAINT `FKc4vg8y04aqb8e74jss5wvnpqo` FOREIGN KEY (`product_category`) REFERENCES `product_category` (`id`)
+  `owner_id` bigint NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
