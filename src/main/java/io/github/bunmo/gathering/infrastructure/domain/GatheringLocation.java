@@ -11,7 +11,7 @@ public record GatheringLocation(
         BigDecimal x,
         @Column(nullable = false, precision = 16, scale = 14)
         BigDecimal y,
-        @Column(nullable = false, length = 20)
+        @Column(nullable = false, length = 255)
         String address
 ) {
 }

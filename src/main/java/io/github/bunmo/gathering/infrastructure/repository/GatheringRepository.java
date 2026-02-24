@@ -9,16 +9,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface GatheringRepository extends JpaRepository<Gathering, Long> {
 
-    @Query("SELECT g FROM Gathering g WHERE g.activeType = :activeType AND (:date IS NULL OR g.meetingDate = :date)")
+    @Query(value = "SELECT g FROM Gathering g WHERE g.activeType = :activeType AND (:date IS NULL OR g.meetingDate = :date)",
+           countQuery = "SELECT COUNT(g) FROM Gathering g WHERE g.activeType = :activeType AND (:date IS NULL OR g.meetingDate = :date)")
     Page<Gathering> findAllByActiveTypeAndDate(
             @Param("activeType") ActiveType activeType,
             @Param("date") LocalDate date,
             Pageable pageable
     );
+
+    @Query("SELECT DISTINCT g FROM Gathering g LEFT JOIN FETCH g.participants WHERE g.id IN :ids")
+    List<Gathering> findAllWithParticipantsByIds(@Param("ids") List<Long> ids);
 
     @Query("SELECT g FROM Gathering g LEFT JOIN FETCH g.participants WHERE g.id = :id AND g.activeType = :activeType")
     Optional<Gathering> findByIdAndActiveType(

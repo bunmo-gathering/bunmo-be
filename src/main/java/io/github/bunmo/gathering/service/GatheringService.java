@@ -7,6 +7,7 @@ import io.github.bunmo.gathering.dto.response.GatheringDetailResponse;
 import io.github.bunmo.gathering.dto.response.GatheringListPageResponse;
 import io.github.bunmo.gathering.dto.response.GatheringListResponse;
 import io.github.bunmo.gathering.exception.GatheringErrorCode;
+import io.github.bunmo.member.exception.MemberErrorCode;
 import io.github.bunmo.gathering.infrastructure.domain.Gathering;
 import io.github.bunmo.gathering.infrastructure.domain.GatheringDetail;
 import io.github.bunmo.gathering.infrastructure.domain.GatheringLocation;
@@ -48,7 +49,7 @@ public class GatheringService {
         }
 
         Member member = memberRepository.findByUuid(userDetails.getUuid())
-                .orElseThrow(() -> new BusinessException(GatheringErrorCode.GATHERING_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
         Long currentMemberId = member.getId();
 
         GatheringDetail detail = new GatheringDetail(
@@ -77,14 +78,27 @@ public class GatheringService {
                 request.meetingTime()
         );
 
-        return CreateGatheringResponse.from(gatheringRepository.save(gathering));
+        Gathering saved = gatheringRepository.save(gathering);
+        saved.addParticipant(currentMemberId);
+        return CreateGatheringResponse.from(saved);
     }
 
     public GatheringListPageResponse getGatherings(int page, int size, LocalDate date) {
         PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<GatheringListResponse> result = gatheringRepository
-                .findAllByActiveTypeAndDate(ActiveType.ACTIVE, date, pageable)
-                .map(GatheringListResponse::from);
+        Page<Gathering> gatheringPage = gatheringRepository.findAllByActiveTypeAndDate(ActiveType.ACTIVE, date, pageable);
+
+        // N+1 방지: ID 목록으로 participants를 한 번에 fetch join
+        List<Long> gatheringIds = gatheringPage.getContent().stream()
+                .map(Gathering::getId)
+                .toList();
+        Map<Long, Gathering> gatheringWithParticipants = gatheringIds.isEmpty()
+                ? Collections.emptyMap()
+                : gatheringRepository.findAllWithParticipantsByIds(gatheringIds).stream()
+                        .collect(Collectors.toMap(Gathering::getId, Function.identity()));
+
+        Page<GatheringListResponse> result = gatheringPage.map(g ->
+                GatheringListResponse.from(gatheringWithParticipants.getOrDefault(g.getId(), g))
+        );
         return GatheringListPageResponse.from(result);
     }
 
@@ -92,9 +106,8 @@ public class GatheringService {
         Gathering gathering = gatheringRepository.findByIdAndActiveType(gatheringId, ActiveType.ACTIVE)
                 .orElseThrow(() -> new BusinessException(GatheringErrorCode.GATHERING_NOT_FOUND));
 
-        // 💡 개선포인트 2: 에러 코드를 분리할 수 있다면 MemberErrorCode.MEMBER_NOT_FOUND 등으로 수정 권장
         Member host = memberRepository.findById(gathering.getOwnerId())
-                .orElseThrow(() -> new BusinessException(GatheringErrorCode.GATHERING_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         List<Long> participantMemberIds = gathering.getParticipants().stream()
                 .map(GatheringParticipant::getMemberId)
@@ -113,7 +126,7 @@ public class GatheringService {
         }
 
         Member currentMember = memberRepository.findByUuid(userDetails.getUuid())
-                .orElseThrow(() -> new BusinessException(GatheringErrorCode.GATHERING_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(MemberErrorCode.MEMBER_NOT_FOUND));
         Long currentMemberId = currentMember.getId();
 
         return GatheringDetailResponse.of(gathering, host, participantMembers, currentMemberId);

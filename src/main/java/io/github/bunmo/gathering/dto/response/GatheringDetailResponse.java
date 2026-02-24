@@ -58,7 +58,10 @@ public record GatheringDetailResponse(
         List<ParticipantInfo> participantInfos = participantMembers.stream()
                 .map(ParticipantInfo::from)
                 .toList();
-
+        boolean isHost = gathering.getOwnerId().equals(currentMemberId);
+        boolean isParticipant = gathering.getParticipants().stream()
+                .anyMatch(p -> p.getMemberId().equals(currentMemberId));
+        String openChatLink = (isHost || isParticipant) ? gathering.getDetail().openChatLink() : null;
         return new GatheringDetailResponse(
                 gathering.getId(),
                 gathering.getType(),
@@ -69,13 +72,13 @@ public record GatheringDetailResponse(
                 gathering.getMeetingTime(),
                 gathering.getLocation().address(),
                 gathering.getDetail().introduction(),
-                gathering.getDetail().openChatLink(),
+                openChatLink,
                 gathering.getCategory(),
                 gathering.getMaxParticipantCount(),
                 gathering.getParticipants().size(),
                 HostInfo.from(host),
                 participantInfos,
-                gathering.getOwnerId().equals(currentMemberId),
+                isHost,
                 remainingTime,
                 gathering.getCreatedAt()
         );

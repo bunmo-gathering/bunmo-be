@@ -71,6 +71,11 @@ public class Gathering {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    public void addParticipant(Long memberId) {
+        GatheringParticipant participant = GatheringParticipant.create(this, memberId);
+        this.participants.add(participant);
+    }
+
     public static Gathering create(
             Long ownerId,
             GatheringType type,
